@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão de Equipamentos TI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+      padding: 20px;
+      height: 100vh;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    li:hover {
+      background-color: #e5e7eb;
+    }
+    li.active {
+      background-color: #d1d5db;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      background: #f9fafb;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 5px 10px;
+    }
+    .search-box input {
+      border: none;
+      flex: 1;
+      margin-top: 0;
+      outline: none;
+      font-size: 14px;
+    }
+    .search-box span {
+      margin-right: 8px;
+      font-size: 16px;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Lista de equipamentos -->
+    <div class="card">
+      <h2>Equipamentos de TI</h2>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="pesquisa" placeholder="Pesquisar equipamento..." oninput="filtrarEquipamentos()" />
+      </div>
+      <ul id="lista-equipamentos"></ul>
+    </div>
+
+    <!-- Detalhes e adicionar -->
+    <div class="card">
+      <div id="detalhes">
+        <p style="color: gray;">Selecione um equipamento na lista para ver detalhes.</p>
+      </div>
+
+      <hr style="margin: 20px 0;" />
+      <h2>Adicionar Novo Equipamento</h2>
+      <input id="nome" placeholder="Nome do equipamento" />
+      <input id="serie" placeholder="Número de série" />
+      <textarea id="suporte" placeholder="Registro de suporte"></textarea>
+      <button onclick="adicionarEquipamento()">Adicionar Equipamento</button>
+    </div>
+  </div>
+
+  <script>
+    let equipamentos = [
+      { id: 1, nome: "Notebook Dell", serie: "ABC123", suporte: "Troca de HD - 12/08/2025" },
+      { id: 2, nome: "Servidor HP", serie: "XYZ789", suporte: "Atualização de memória - 20/08/2025" }
+    ];
+
+    let selecionado = null;
+
+    function renderLista(filtro = "") {
+      const lista = document.getElementById("lista-equipamentos");
+      lista.innerHTML = "";
+      equipamentos
+        .filter(eq => eq.nome.toLowerCase().includes(filtro.toLowerCase()) || eq.serie.toLowerCase().includes(filtro.toLowerCase()))
+        .forEach(eq => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${eq.nome}</strong> <span style='color:gray;font-size:13px;'>(${eq.serie})</span>`;
+          li.className = selecionado?.id === eq.id ? "active" : "";
+          li.onclick = () => mostrarDetalhes(eq);
+          lista.appendChild(li);
+        });
+    }
+
+    function mostrarDetalhes(eq) {
+      selecionado = eq;
+      const detalhes = document.getElementById("detalhes");
+      detalhes.innerHTML = `
+        <h2>Detalhes do Equipamento</h2>
+        <p><strong>Nome:</strong> ${eq.nome}</p>
+        <p><strong>Série:</strong> ${eq.serie}</p>
+        <p><strong>Registro de Suporte:</strong> ${eq.suporte}</p>
+      `;
+      renderLista(document.getElementById("pesquisa").value);
+    }
+
+    function adicionarEquipamento() {
+      const nome = document.getElementById("nome").value;
+      const serie = document.getElementById("serie").value;
+      const suporte = document.getElementById("suporte").value;
+      if (!nome || !serie) return;
+      const novo = { id: Date.now(), nome, serie, suporte };
+      equipamentos.push(novo);
+      document.getElementById("nome").value = "";
+      document.getElementById("serie").value = "";
+      document.getElementById("suporte").value = "";
+      renderLista(document.getElementById("pesquisa").value);
+    }
+
+    function filtrarEquipamentos() {
+      const termo = document.getElementById("pesquisa").value;
+      renderLista(termo);
+    }
+
+    renderLista();
+  </script>
+</body>
+</html>
