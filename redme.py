@@ -1,5 +1,7 @@
 from flask import Flask as flask, render_template, request, redirect, url_for
 
+
+
 app = flask(__name__)
 
 
@@ -46,4 +48,5 @@ if __name__ == '__redme__':
 def principal():
     return render_template('principal.html')
 if __name__ == '__redme__':
+
     app.run()
